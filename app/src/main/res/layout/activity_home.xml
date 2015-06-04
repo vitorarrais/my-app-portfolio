@@ -1,0 +1,94 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/home_bg"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".HomeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TitleTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="48dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/portfolioTitle" />
+
+        <RelativeLayout
+            android:id="@+id/buttonsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:gravity="center_horizontal"
+            android:layout_centerInParent="true">
+
+            <Button
+                android:id="@+id/button1"
+                style="@style/ButtonTheme"
+                android:layout_width="@dimen/buttonWidth"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/buttonBottomMargin"
+                android:padding="@dimen/buttonPadding"
+                android:text="@string/spotfyStreamer"
+                android:onClick="onClick"/>
+
+            <Button
+                android:id="@+id/button2"
+                style="@style/ButtonTheme"
+                android:layout_width="@dimen/buttonWidth"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button1"
+                android:layout_marginBottom="@dimen/buttonBottomMargin"
+                android:padding="@dimen/buttonPadding"
+                android:text="@string/footballScoreApp"
+                android:onClick="onClick"/>
+
+            <Button
+                android:id="@+id/button3"
+                style="@style/ButtonTheme"
+                android:layout_width="@dimen/buttonWidth"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button2"
+                android:layout_marginBottom="@dimen/buttonBottomMargin"
+                android:padding="@dimen/buttonPadding"
+                android:text="@string/libraryApp"
+                android:onClick="onClick"/>
+
+            <Button
+                android:id="@+id/button4"
+                style="@style/ButtonTheme"
+                android:layout_width="@dimen/buttonWidth"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button3"
+                android:layout_marginBottom="@dimen/buttonBottomMargin"
+                android:padding="@dimen/buttonPadding"
+                android:text="@string/buildItBigger"
+                android:onClick="onClick"/>
+
+            <Button
+                android:id="@+id/button5"
+                style="@style/ButtonTheme"
+                android:layout_width="@dimen/buttonWidth"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button4"
+                android:layout_marginBottom="@dimen/buttonBottomMargin"
+                android:background="@drawable/button_red_bg"
+                android:padding="@dimen/buttonPadding"
+                android:text="@string/capstoneApp"
+                android:onClick="onClick"/>
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</ScrollView>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ButtonTheme" parent="Base.Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_bg</item>
+        <item name="android:textColor">@color/buttonTextColor</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+</resources>

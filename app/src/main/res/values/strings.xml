@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">My Portfolio App</string>
+
+    <string name="spotfyStreamer">Spotify Streamer</string>
+    <string name="footballScoreApp">Football Score App</string>
+    <string name="libraryApp">Library App</string>
+    <string name="xyzReader">XYZ Reader</string>
+    <string name="buildItBigger">Build it Bigger</string>
+    <string name="capstoneApp">Capstone: My Own App</string>
+    <string name="portfolioTitle">Nanodegree Apps</string>
+    <string name="action_settings">Settings</string>
+    <string name="button1">This button will launch Spotfy Streamer App</string>
+    <string name="button2">This button will launch Football Score App</string>
+    <string name="button3">This button will launch Library App</string>
+    <string name="button4">This button will launch Build It Bigger App</string>
+    <string name="button5">This button will launch My Capstone App</string>
+</resources>
