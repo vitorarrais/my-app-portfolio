@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:orientation="horizontal"
+    tools:background="@color/primary_dark"
+    tools:layout_marginTop="20dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:gravity="center_vertical">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6dp"
+        android:layout_marginEnd="6dp">
+
+        <ImageView
+            android:id="@+id/artist_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout_width="@dimen/artist_image_list"
+            tools:layout_height="@dimen/artist_image_list"
+            tools:scaleType="center"
+            tools:src="@drawable/img_placeholder"/>
+
+        <TextView
+            android:id="@+id/text_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="C"
+            android:layout_gravity="center"
+            android:textSize="38sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        tools:text="Coldplay and Rihanna"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="16sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="@color/primary_text"/>
+
+</LinearLayout>
