@@ -15,5 +15,6 @@
     <string name="home_app_name_1"><b>Spotify</b></string>
     <string name="home_app_name_2"><b>Streamer</b></string>
     <string name="non_empty">Please, type something</string>
+    <string name="not_connected">Sorry, you\'re not connected</string>
 
 </resources>

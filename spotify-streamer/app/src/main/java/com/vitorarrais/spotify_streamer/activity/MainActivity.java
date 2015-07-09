@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.vitorarrais.spotify_streamer.App;
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements ArtistAdapter.Art
      */
     protected Menu mMenu;
 
+
+    /**
+     * Pogress bar shown while loading content.
+     */
     ProgressBar mProgressBar;
 
 
@@ -75,51 +80,63 @@ public class MainActivity extends AppCompatActivity implements ArtistAdapter.Art
         // create adapter with a on click listener parameter
         mAdapter = new ArtistAdapter(this, this);
 
+        // setup recycler view
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, null));
         mRecyclerView.setAdapter(mAdapter);
 
         mSwitcher = (ViewSwitcher) findViewById(R.id.viewSwitcher);
 
-        mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         // check for extras
         // in this case, the extra is a query string from home activity
         if (getIntent().getExtras() != null) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            // make api call for search artists with the query string
-            ApiManager.getInstance().searchArtists(
-                    getIntent().getStringExtra(App.EXTRA_STRING_NAME_TAG),
-                    new SpotifyCallback<ArtistsPager>() {
-                        @Override
-                        public void failure(SpotifyError spotifyError) {
-                            // the api call failed
-                            Log.d("ErrorTag", spotifyError.getMessage());
-                        }
 
-                        @Override
-                        public void success(ArtistsPager artists, Response response) {
-                            // the api call has succed
-                            if (!artists.artists.items.isEmpty() &&
-                                    mSwitcher.getCurrentView().getId() == R.id.element_empty_list) {
-                                // if the api call returned something and the screen is
-                                // in the empty state, I need to change the switcher layout to display
-                                // the result in the screen
-                                mSwitcher.showPrevious();
-                            } else if (artists.artists.items.isEmpty() &&
-                                    mSwitcher.getCurrentView() == mRecyclerView) {
-                                // if the api call returned an empty result, I need to change the switcher
-                                // to display the empty state layout
-                                mSwitcher.showNext();
+            // check device connectivity
+            if (!ApiManager.isNetworkAvailable()) {
+                // not connected
+                // show warning toast
+                Toast toast = Toast.makeText(this, getText(R.string.not_connected), Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                mProgressBar.setVisibility(View.GONE);
+            } else {
+                mProgressBar.setVisibility(View.VISIBLE);
+                // make api call for search artists with the query string
+                ApiManager.getInstance().searchArtists(
+                        getIntent().getStringExtra(App.EXTRA_STRING_NAME_TAG),
+                        new SpotifyCallback<ArtistsPager>() {
+                            @Override
+                            public void failure(SpotifyError spotifyError) {
+                                // the api call failed
+                                // dismiss progress bar
+                                mProgressBar.setVisibility(View.GONE);
                             }
-                            // update recycler view with the api's call result
-                            mProgressBar.setVisibility(View.GONE);
-                            mAdapter.setData(artists.artists);
 
-                        }
-                    });
+                            @Override
+                            public void success(ArtistsPager artists, Response response) {
+                                // the api call has succed
+                                if (!artists.artists.items.isEmpty() &&
+                                        mSwitcher.getCurrentView().getId() == R.id.element_empty_list) {
+                                    // if the api call returned something and the screen is
+                                    // in the empty state, I need to change the switcher layout to display
+                                    // the result in the screen
+                                    mSwitcher.showPrevious();
+                                } else if (artists.artists.items.isEmpty() &&
+                                        mSwitcher.getCurrentView() == mRecyclerView) {
+                                    // if the api call returned an empty result, I need to change the switcher
+                                    // to display the empty state layout
+                                    mSwitcher.showNext();
+                                }
+                                // update recycler view with the api's call result
+                                mProgressBar.setVisibility(View.GONE);
+                                mAdapter.setData(artists.artists);
+
+                            }
+                        });
+            }
         }
 
     }
@@ -223,8 +240,9 @@ public class MainActivity extends AppCompatActivity implements ArtistAdapter.Art
     /**
      * Implement on recycler view item click event listener that will be passed as parameter
      * to artist adapter
+     *
      * @param artistId the artist id
-     * @param name the name
+     * @param name     the name
      */
     @Override
     public void onClickArtist(String artistId, String name) {

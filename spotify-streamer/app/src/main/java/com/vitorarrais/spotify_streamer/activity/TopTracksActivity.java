@@ -5,13 +5,14 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.vitorarrais.spotify_streamer.App;
@@ -65,11 +66,11 @@ public class TopTracksActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // setup title of toolbar
-        mTitleLayout = (LinearLayout)getLayoutInflater().inflate(R.layout.element_top_tracks_title, null);
-        TextView title = (TextView)mTitleLayout.findViewById(R.id.title);
+        mTitleLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.element_top_tracks_title, null);
+        TextView title = (TextView) mTitleLayout.findViewById(R.id.title);
         title.setText(getSupportActionBar().getTitle());
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        TextView subtitle = (TextView)mTitleLayout.findViewById(R.id.subtitle);
+        TextView subtitle = (TextView) mTitleLayout.findViewById(R.id.subtitle);
         getSupportActionBar().setCustomView(mTitleLayout);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
 
@@ -86,38 +87,49 @@ public class TopTracksActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, null));
         mRecyclerView.setAdapter(mAdapter);
 
-        mProgressBar = (ProgressBar)findViewById(R.id.tracks_progress_bar);
+        mProgressBar = (ProgressBar) findViewById(R.id.tracks_progress_bar);
 
 
         // check for extras.
         // in this case the activity receive the spotify id of and artist that will
         // be used to fetch top tracks
         if (getIntent().getExtras() != null) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            // add subtitle
-            subtitle.setText(getIntent().getStringExtra(App.EXTRA_STRING_NAME_TAG));
-            ApiManager.getInstance().getTopTracks(getIntent().getStringExtra(App.EXTRA_STRING_ID_TAG),
-                    new SpotifyCallback<Tracks>() {
-                        @Override
-                        public void failure(SpotifyError spotifyError) {
-                            Log.d("ErrorTag", spotifyError.getMessage());
-                        }
 
-                        @Override
-                        public void success(Tracks tracks, Response response) {
-                            // switcher to control empty result states
-                            if (!tracks.tracks.isEmpty() &&
-                                    mSwitcher.getCurrentView().getId() == R.id.element_empty_list) {
-                                mSwitcher.showNext();
-                            } else if (tracks.tracks.isEmpty() &&
-                                    mSwitcher.getCurrentView() == mRecyclerView) {
-                                mSwitcher.showPrevious();
+            // check device connectivity
+            if (!ApiManager.isNetworkAvailable()) {
+                // not connected
+                // show warning toast
+                Toast toast = Toast.makeText(this, getText(R.string.not_connected), Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0,0);
+                toast.show();
+                mProgressBar.setVisibility(View.GONE);
+            } else {
+                mProgressBar.setVisibility(View.VISIBLE);
+                // add subtitle
+                subtitle.setText(getIntent().getStringExtra(App.EXTRA_STRING_NAME_TAG));
+                ApiManager.getInstance().getTopTracks(getIntent().getStringExtra(App.EXTRA_STRING_ID_TAG),
+                        new SpotifyCallback<Tracks>() {
+                            @Override
+                            public void failure(SpotifyError spotifyError) {
+                                mProgressBar.setVisibility(View.GONE);
                             }
-                            mProgressBar.setVisibility(View.GONE);
-                            // update recycler data
-                            mAdapter.setData(tracks.tracks);
-                        }
-                    });
+
+                            @Override
+                            public void success(Tracks tracks, Response response) {
+                                // switcher to control empty result states
+                                if (!tracks.tracks.isEmpty() &&
+                                        mSwitcher.getCurrentView().getId() == R.id.element_empty_list) {
+                                    mSwitcher.showNext();
+                                } else if (tracks.tracks.isEmpty() &&
+                                        mSwitcher.getCurrentView() == mRecyclerView) {
+                                    mSwitcher.showPrevious();
+                                }
+                                mProgressBar.setVisibility(View.GONE);
+                                // update recycler data
+                                mAdapter.setData(tracks.tracks);
+                            }
+                        });
+            }
         }
 
     }
