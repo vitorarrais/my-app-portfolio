@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
                     // start the main activity
                     Intent intent = new Intent(HomeActivity.this, MainActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString(App.EXTRA_STRING_NAME_TAG, mSearch.getText().toString());
+                    bundle.putString(MainActivity.KEY_ARTIST_NAME, mSearch.getText().toString());
                     intent.putExtras(bundle);
                     startActivity(intent);
                     finish();

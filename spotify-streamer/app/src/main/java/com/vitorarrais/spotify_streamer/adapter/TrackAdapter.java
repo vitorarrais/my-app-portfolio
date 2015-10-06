@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.vitorarrais.spotify_streamer.R;
+import com.vitorarrais.spotify_streamer.activity.TracksActivity;
+import com.vitorarrais.spotify_streamer.model.TrackModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
- * The type Artist adapter, used to insert data in the RecyclerView  in {@link com.vitorarrais.spotify_streamer.activity.TopTracksActivity}
+ * The type Artist adapter, used to insert data in the RecyclerView  in {@link TracksActivity}
  */
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHolder> {
 
@@ -33,10 +35,12 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
      */
     private Context mContext;
 
+    private TrackViewHolder.OnTrackClickListener mListener;
+
     /**
      * The type Track view holder. Provide a reference to the views for each data item.
      */
-    public static class TrackViewHolder extends RecyclerView.ViewHolder{
+    public static class TrackViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         /**
          * The track name.
@@ -53,7 +57,22 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
          */
         public TextView mTrackAlbum;
 
+        /**
+         * Placeholder
+         */
         public TextView mTextPlaceholder;
+
+        /**
+         * Track model
+         */
+        public TrackModel mTrackModel;
+
+        public int mCurrentPos;
+
+        /**
+         * On track click listener
+         */
+        public OnTrackClickListener mOnTrackClickListener;
 
         /**
          * Instantiates a new Track view holder.
@@ -67,6 +86,26 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
             mTrackAlbum = (TextView)v.findViewById(R.id.track_album);
             mTextPlaceholder = (TextView)v.findViewById(R.id.text_placeholder);
         }
+
+        public TrackViewHolder(View v, OnTrackClickListener listener) {
+            super(v);
+            v.setOnClickListener(this);
+            mTrackName = (TextView)v.findViewById(R.id.track_name);
+            mTrackImage = (ImageView)v.findViewById(R.id.track_image);
+            mTrackAlbum = (TextView)v.findViewById(R.id.track_album);
+            this.mOnTrackClickListener = listener;
+            mTextPlaceholder = (TextView)v.findViewById(R.id.text_placeholder);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mOnTrackClickListener.onClick(mTrackModel, mCurrentPos);
+        }
+
+        public interface OnTrackClickListener {
+
+            void onClick(TrackModel track, int pos);
+        }
     }
 
 
@@ -77,6 +116,12 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
      */
     public TrackAdapter(Context context) {
         mDataset = new ArrayList<>();
+        mContext = context;
+    }
+
+    public TrackAdapter(Context context, TrackViewHolder.OnTrackClickListener listener) {
+        mDataset = new ArrayList<>();
+        this.setListener(listener);
         mContext = context;
     }
 
@@ -114,7 +159,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.element_track_list_row, parent, false);
-        TrackViewHolder vh = new TrackViewHolder(v);
+        TrackViewHolder vh = new TrackViewHolder(v, mListener);
         return vh;
     }
 
@@ -128,6 +173,8 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
     public void onBindViewHolder(TrackViewHolder holder, int position) {
         // get element from your dataset at this position
         // replace the contents of the view with that element
+        holder.mTrackModel = TrackModel.from(mDataset.get(position));
+        holder.mCurrentPos = position;
         holder.mTrackName.setText(mDataset.get(position).name);
         holder.mTrackAlbum.setText(mDataset.get(position).album.name);
         if(!mDataset.get(position).album.images.isEmpty()){
@@ -197,5 +244,9 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
                     .centerInside()
                     .into(holder.mTrackImage);
         }
+    }
+
+    public void setListener(TrackViewHolder.OnTrackClickListener mListener) {
+        this.mListener = mListener;
     }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.vitorarrais.spotify_streamer.R;
+import com.vitorarrais.spotify_streamer.model.ArtistModel;
 import com.vitorarrais.spotify_streamer.ui.CircleTransform;
 
 import java.util.ArrayList;
@@ -48,17 +49,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
         /**
          * The artist name.
          */
-        public TextView mArtistName;
+        public TextView mArtistNameView;
 
         /**
          * The artist image.
          */
-        public ImageView mArtistImage;
+        public ImageView mArtistImageView;
 
         /**
          * The artist id.
          */
-        public String mArtistId;
+        public ArtistModel mArtist;
 
         /**
          * The listener to handle click events.
@@ -77,8 +78,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
             super(v);
             mListener = listener;
             v.setOnClickListener(this);
-            mArtistName = (TextView)v.findViewById(R.id.artist_name);
-            mArtistImage = (ImageView)v.findViewById(R.id.artist_image);
+            mArtistNameView = (TextView)v.findViewById(R.id.artist_name);
+            mArtistImageView = (ImageView)v.findViewById(R.id.artist_image);
             mTextPlaceholder = (TextView)v.findViewById(R.id.text_placeholder);
         }
 
@@ -90,8 +91,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
          */
         public ArtistViewHolder(View v) {
             super(v);
-            mArtistName = (TextView)v.findViewById(R.id.artist_name);
-            mArtistImage = (ImageView)v.findViewById(R.id.artist_image);
+            mArtistNameView = (TextView)v.findViewById(R.id.artist_name);
+            mArtistImageView = (ImageView)v.findViewById(R.id.artist_image);
         }
 
         /**
@@ -100,7 +101,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
          */
         @Override
         public void onClick(View view) {
-            mListener.onClickArtist(mArtistId, mArtistName.getText().toString());
+            mListener.onClickArtist(mArtist);
         }
 
         /**
@@ -110,11 +111,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
 
             /**
              * On click artist.
-             *
-             * @param artistId the artist id
-             * @param name the name
              */
-            public void onClickArtist(String artistId, String name);
+            public void onClickArtist(ArtistModel artist);
         }
     }
 
@@ -189,8 +187,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
     public void onBindViewHolder(ArtistViewHolder holder, int position) {
         // get element from your dataset at this position
         // replace the contents of the view with that element
-        holder.mArtistId = mDataset.get(position).id;
-        holder.mArtistName.setText(mDataset.get(position).name);
+        holder.mArtist = ArtistModel.from(mDataset.get(position));
+        holder.mArtistNameView.setText(mDataset.get(position).name);
         if(!mDataset.get(position).images.isEmpty()){
             loadImage(mDataset.get(position).images.get(0).url, holder);
         }else {
@@ -235,7 +233,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
                     .resize(width, height)
                     .centerCrop()
                     .transform(new CircleTransform())
-                    .into(holder.mArtistImage, new Callback() {
+                    .into(holder.mArtistImageView, new Callback() {
 
                         @Override
                         public void onSuccess() {
@@ -250,7 +248,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
 
         } else {
 
-            String placeholder = holder.mArtistName.getText().toString().substring(0,1);
+            String placeholder = holder.mArtistNameView.getText().toString().substring(0,1);
             holder.mTextPlaceholder.setText(placeholder.toUpperCase());
             holder.mTextPlaceholder.setVisibility(View.VISIBLE);
 
@@ -259,7 +257,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ArtistView
                     .resize(width, height)
                     .centerInside()
                     .transform(new CircleTransform())
-                    .into(holder.mArtistImage);
+                    .into(holder.mArtistImageView);
         }
     }
 }

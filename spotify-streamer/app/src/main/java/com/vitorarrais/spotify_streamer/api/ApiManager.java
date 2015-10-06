@@ -1,10 +1,6 @@
 package com.vitorarrais.spotify_streamer.api;
 
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import com.vitorarrais.spotify_streamer.App;
 import com.vitorarrais.spotify_streamer.R;
 
@@ -50,19 +46,10 @@ public class ApiManager {
         return sInstance;
     }
 
-
-
-    public static boolean isNetworkAvailable(){
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager)getInstance().mApp.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
-
     /**
      * Application instance.
      */
-    public App mApp;
+    App mApp;
 
     /**
      * SpotifyApi instance.

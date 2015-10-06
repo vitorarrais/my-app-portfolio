@@ -11,8 +11,8 @@ public class App extends Application {
 
 
     public static final String COUNTRY_MAP_TAG = "country";
-    public static final String EXTRA_STRING_ID_TAG = "extra_id_string";
-    public static final String EXTRA_STRING_NAME_TAG = "extra_name_string";
+    public static final String EXTRA_ARTIST_TAG = "artist";
+    public static final String EXTRA_ARTIST_NAME_TAG = "artist_name";
 
     @Override
     public void onCreate() {
