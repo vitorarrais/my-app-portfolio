@@ -66,6 +66,12 @@ public class PlaybackFragment extends DialogFragment {
     @Bind(R.id.playback_seekbar)
     SeekBar mSeekBar;
 
+    @Bind(R.id.playback_elapsed_time)
+    TextView mElapsedTimeView;
+
+    @Bind(R.id.playback_track_duration)
+    TextView mTrackDurationView;
+
 
     //variable for counting two successive up-down events
     int clickCount = 0;
@@ -144,8 +150,8 @@ public class PlaybackFragment extends DialogFragment {
         View root = inflater.inflate(R.layout.fragment_playback, container, false);
         ButterKnife.bind(this, root);
 
-        if (((AppCompatActivity)getActivity()).getSupportActionBar()!=null){
-            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         }
 
         if (getArguments() != null) {
@@ -157,18 +163,20 @@ public class PlaybackFragment extends DialogFragment {
 
         }
 
-        TracksFragment tracksFragment = (TracksFragment)getActivity().getSupportFragmentManager()
+        TracksFragment tracksFragment = (TracksFragment) getActivity().getSupportFragmentManager()
                 .findFragmentByTag(MainActivity.TAG_TRACKS_FRAG);
 
-        if (tracksFragment!=null)
-                mTopTracksList = tracksFragment.getTopTracks();
+        if (tracksFragment != null)
+            mTopTracksList = tracksFragment.getTopTracks();
 
         mPreviousView.setOnTouchListener(MyOnTouchListener);
 
         return root;
     }
 
-    /** The system calls this only when creating the layout in a dialog. */
+    /**
+     * The system calls this only when creating the layout in a dialog.
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // The only reason you might override this method when using onCreateView() is
@@ -255,28 +263,46 @@ public class PlaybackFragment extends DialogFragment {
         updateUi(track);
     }
 
+    int currentMin = 0;
+    String currentMinString = "";
+
+    int currentSec = 0;
+    String currentSecString = "";
+
+    String currentElapsedTimeString = "";
 
     /**
      * Provide a seek bar to track song progress
      */
     private void startSeekBar() {
 
-        mSeekBar.setMax(mMediaPlayer.getDuration() / 1000);
+        int trackDuration = mMediaPlayer.getDuration() / 1000;
 
-        mHandler = new Handler();
+        mSeekBar.setMax(trackDuration);
 
-        // update seek bar progress every 100 ms
-        getActivity().runOnUiThread(new Runnable() {
+        int minutes = trackDuration / 60;
+        trackDuration = trackDuration - minutes * 60;
+        int seconds = trackDuration;
 
-            @Override
-            public void run() {
-                if (mMediaPlayer != null) {
-                    int mCurrentPosition = mMediaPlayer.getCurrentPosition() / 1000;
-                    mSeekBar.setProgress(mCurrentPosition);
-                }
-                mHandler.postDelayed(this, 100);
-            }
-        });
+        String minString = String.valueOf(minutes);
+        if (minutes < 10)
+            minString = "0".concat(minString);
+
+        String secString = String.valueOf(seconds);
+        if (seconds < 10)
+            secString = "0".concat(secString);
+
+        String trackDurationString = minString.concat(":").concat(secString);
+
+        mTrackDurationView.setText(trackDurationString);
+
+        mElapsedTimeView.setText("00:00");
+        currentMin = 0;
+        currentSec = 0;
+
+
+        setSeekBarHandler();
+
 
         // set a listener to update track progress at media player when
         // user manually changes it
@@ -296,9 +322,64 @@ public class PlaybackFragment extends DialogFragment {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (mMediaPlayer != null && fromUser) {
                     mMediaPlayer.seekTo(progress * 1000);
+                    setElapsedTime(progress);
+                    setSeekBarHandler();
                 }
             }
         });
+    }
+
+    private void setSeekBarHandler(){
+
+        if (mHandler!=null)
+            mHandler.removeCallbacksAndMessages(null);
+        mHandler = new Handler();
+
+        // update seek bar progress every 1 sec
+        getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (mMediaPlayer != null) {
+                    int mCurrentPosition = mMediaPlayer.getCurrentPosition() / 1000;
+                    mSeekBar.setProgress(mCurrentPosition);
+                    currentSec = currentSec + 1;
+                    if (currentSec==60){
+                        currentMin = currentMin+1;
+                        currentSec = 0;
+                    }
+                    currentMinString = String.valueOf(currentMin);
+                    currentSecString = String.valueOf(currentSec);
+                    if(currentMin<10)
+                        currentMinString = "0".concat(currentMinString);
+                    if (currentSec<10)
+                        currentSecString = "0".concat(currentSecString);
+
+                    currentElapsedTimeString = currentMinString.concat(":").concat(currentSecString);
+
+                    mElapsedTimeView.setText(currentElapsedTimeString);
+                }
+                mHandler.postDelayed(this, 1000);
+            }
+        });
+    }
+
+    private void setElapsedTime(int time){
+
+        currentMin = time / 60;
+        time = time - currentMin*60;
+        currentSec = time;
+
+        currentMinString = String.valueOf(currentMin);
+        currentSecString = String.valueOf(currentSec);
+        if(currentMin<10)
+            currentMinString = "0".concat(currentMinString);
+        if (currentSec<10)
+            currentSecString = "0".concat(currentSecString);
+
+        currentElapsedTimeString = currentMinString.concat(":").concat(currentSecString);
+
+        mElapsedTimeView.setText(currentElapsedTimeString);
     }
 
 
@@ -351,14 +432,14 @@ public class PlaybackFragment extends DialogFragment {
 
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
 
-        TracksFragment tracksFragment = (TracksFragment)getActivity().getSupportFragmentManager()
+        TracksFragment tracksFragment = (TracksFragment) getActivity().getSupportFragmentManager()
                 .findFragmentByTag(MainActivity.TAG_TRACKS_FRAG);
         getActivity().getSupportFragmentManager().beginTransaction().attach(tracksFragment).commit();
 
         getActivity().getSupportFragmentManager().beginTransaction().detach(this).commit();
 
-        if (((AppCompatActivity)getActivity()).getSupportActionBar() != null){
-            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         }
     }
 
