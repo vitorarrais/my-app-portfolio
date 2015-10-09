@@ -17,5 +17,6 @@
     <string name="non_empty">Please, type something</string>
     <string name="title_activity_playback">Play</string>
     <string name="general_error">Sorry, an error has ocurred</string>
+    <string name="now_playing_label">Now playing:</string>
 
 </resources>

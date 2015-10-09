@@ -1,6 +1,7 @@
 package com.vitorarrais.spotify_streamer.activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.vitorarrais.spotify_streamer.App;
 import com.vitorarrais.spotify_streamer.R;
 
 /**
@@ -36,6 +36,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        if(!getResources().getBoolean(R.bool.large_layout)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         mHomeAppNameAbove = (TextView) findViewById(R.id.home_app_name_above);
         mHomeAppNameBelow = (TextView) findViewById(R.id.home_app_name_below);

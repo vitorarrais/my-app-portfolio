@@ -153,6 +153,7 @@ public class TracksFragment extends Fragment implements TrackAdapter.TrackViewHo
             if (pbf!=null){
                 fm.beginTransaction().remove(pbf);
             }
+
             FragmentTransaction ft = fm.beginTransaction();
             ft.detach(this);
             ft.add(R.id.tracks_container, frag, TAG_PLAYBACK);

@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -19,8 +21,7 @@
 
         <activity
             android:name=".activity.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:screenOrientation="portrait" >
+            android:label="@string/title_activity_home" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,6 +39,8 @@
 
             </meta-data>
         </activity>
+
+        <service android:enabled="true" android:name="com.vitorarrais.spotify_streamer.service.PlaybackService" />
 
     </application>
 
